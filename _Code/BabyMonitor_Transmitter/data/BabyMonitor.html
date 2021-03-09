@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <!--/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+// This file is part of the Arduino_BabyMonitor distribution (https://github.com/wrcsubers/Arduino_BabyMonitor).
+// Copyright (c) 2021 wrcsubers - Cameron W.
+// 
+// This program is free software: you can redistribute it and/or modify  
+// it under the terms of the GNU General Public License as published by  
+// the Free Software Foundation, version 3.
+//
+// This program is distributed in the hope that it will be useful, but 
+// WITHOUT ANY WARRANTY; without even the implied warranty of 
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License 
+// along with this program. If not, see <http://www.gnu.org/licenses/>.
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+    <title>Baby Monitor</title>
+    <meta name="description" content="Baby Monitor">
+    <meta name="author" content="Cameron Woods - 2021">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+    <link rel="manifest" href="/icons/site.webmanifest">
+    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/icons/favicon.ico">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-config" content="/icons/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            transition-timing-function: ease-in;
+            transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+            transition: 0.5s;
+        }
+        
+        input.myRange {
+            width: 180px;
+            margin-top: 12px;
+            margin-bottom: 20px;
+            background-color: transparent;
+            -webkit-appearance: none;
+        }
+        
+        input.myRange:focus {
+            outline: none;
+        }
+        
+        input.myRange::-webkit-slider-runnable-track {
+            border: 2px solid #D9DADC;
+            border-radius: 25px;
+            width: 100%;
+            height: 30px;
+            cursor: pointer;
+        }
+        
+        input.myRange::-webkit-slider-thumb {
+            width: 26px;
+            height: 26px;
+            background: #4ed164;
+            border: 1px solid #D9DADC;
+            border-radius: 15px;
+            cursor: pointer;
+            -webkit-appearance: none;
+        }
+        
+        input.myRange:focus::-webkit-slider-runnable-track {
+            background: #ffffff;
+        }
+        
+        input.myRange::-moz-range-track {
+            border: 2px solid #D9DADC;
+            border-radius: 25px;
+            width: 100%;
+            height: 30px;
+            cursor: pointer;
+        }
+        
+        input.myRange::-moz-range-thumb {
+            width: 26px;
+            height: 26px;
+            background: #4ed164;
+            border: 1px solid #D9DADC;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+        
+        input.mySwitch {
+            position: relative;
+            -webkit-appearance: none;
+            outline: none;
+            width: 50px;
+            height: 30px;
+            background-color: #fff;
+            border: 2px solid #D9DADC;
+            border-radius: 50px;
+            box-shadow: inset -20px 0 0 0 #fff;
+            transition-timing-function: ease-in;
+            transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        
+        input.mySwitch:after {
+            content: "";
+            position: absolute;
+            top: 1px;
+            left: 1px;
+            background: transparent;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.2);
+            transition-timing-function: ease-in;
+            transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+            transition: 0.2s;
+        }
+        
+        input.mySwitch:checked {
+            box-shadow: inset 20px 0 0 0 #4ed164;
+            border-color: #D9DADC;
+            transition-timing-function: ease-in;
+            transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+            transition: 0.2s;
+        }
+        
+        input.mySwitch:checked:after {
+            left: 20px;
+            box-shadow: -2px 4px 3px rgba(0, 0, 0, 0.05);
+            transition-timing-function: ease-in;
+            transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+            transition: 0.2s;
+        }
+        
+        .sectionDivider {
+            display: flex;
+            align-items: center;
+            height: 35px;
+            margin-top: 5px;
+            margin-bottom: 7px;
+        }
+        
+        h1 {
+            width: auto;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 10px;
+            margin-bottom: 0px;
+            color: #666666;
+            font-family: Arial;
+            font-size: 28px;
+            font-weight: normal;
+            text-decoration: underline;
+        }
+        
+        h2 {
+            width: auto;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 2px;
+            margin-bottom: 2px;
+            color: #666666;
+            font-family: Arial;
+            font-size: 34px;
+            font-weight: normal;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        
+        h3 {
+            height: auto;
+            width: auto;
+            color: #666666;
+            font-family: Arial;
+            font-size: 13px;
+            font-weight: bold;
+            margin: auto;
+            display: inline-block;
+        }
+        
+        hr {
+            color: #FFFFFF;
+            width: 400px;
+            max-width: 70vw;
+            margin: auto;
+        }
+        
+        div {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition-timing-function: ease-in-out;
+            transition: 0.25s;
+        }
+        
+        input {
+            display: inline-block;
+        }
+        
+        button {
+            border: transparent;
+            background: transparent;
+            color: #AAAAAA;
+            font-size: medium;
+        }
+        
+        span {
+            transition-timing-function: ease-in-out;
+            transition: 0.5s;
+        }
+        
+        *:focus {
+            outline: none;
+        }
+    </style>
+</head>
+
+<body id="body">
+    <div>
+        <div id="divError" style="align-items: center; height: 75vh; display: flex;">
+            <h1>Baby Monitor</h1>
+            <div class="sectionDivider"></div>
+            <h2>Trying to Connect...</h2>
+        </div>
+        <div id="divConnected" style="display: none;">
+            <div style="height: 95vh;">
+                <h1>Baby Monitor</h1>
+                <div class="sectionDivider"></div>
+                <div>
+                    <h3>Alert Status:</h3>
+                    <span style="height: 40vmax; width: 40vmax; max-width: 300px; max-height: 300px; background-color: #bbb; border-radius: 50%; display: inline-block; margin: 10px;" id="spanAlertStatus"></span>
+                </div>
+                <div style="margin-top: 25px;">
+                    <h3>Current Mic Delta Value:</h3>
+                    <h2 id="textCurrentMicDeltaValue">50</h2>
+                </div>
+                <div style="position: absolute; top: 92.5vh;">
+                    <button id="buttonShowSettings" onclick="toggleSettings()">&#9662; Show Settings &#9662;</button>
+                </div>
+            </div>
+            <div id="divSettings" style="transform: scaleY(0); height: 0;">
+                <div class="sectionDivider">
+                    <hr>
+                </div>
+                <div>
+                    <h3>Night Mode</h3>
+                    <input id="checkboxNightMode" class="mySwitch" type="checkbox" oninput="nightModeChange(this.id, this.checked)">
+                </div>
+                <div class="sectionDivider">
+                    <hr>
+                </div>
+                <div>
+                    <div>
+                        <h3 id="textLowAlert">Low Alert Value:</h3>
+                        <input id="rangeLowAlert" onchange="sendValues(this.id, this.value, 'Alerts')" oninput="checkValues(this.id)" class="myRange" type="range" min="5" max="75" step="5">
+                    </div>
+                    <div>
+                        <h3 id="textMidAlert">Mid Alert Value:</h3>
+                        <input id="rangeMidAlert" onchange="sendValues(this.id, this.value, 'Alerts')" oninput="checkValues(this.id)" class="myRange" type="range" min="10" max="150" step="5">
+                    </div>
+                    <div>
+                        <h3 id="textHighAlert">High Alert Value:</h3>
+                        <input id="rangeHighAlert" onchange="sendValues(this.id, this.value, 'Alerts')" oninput="checkValues(this.id)" class="myRange" type="range" min="15" max="225" step="5">
+                    </div>
+                </div>
+                <div class="sectionDivider">
+                    <hr>
+                </div>
+                <div>
+                    <h3 id="textMicSamplesToAverage">Mic Samples to Average:
+                    </h3>
+                    <input id="rangeMicSamplesToAverage" onchange="sendValues(this.id, this.value)" oninput="checkValues(this.id)" class="myRange" type="range" min="2" max="50" step="2">
+                </div>
+                <div>
+                    <h3>Mic Delta Averaged Over:</h3>
+                    <h3 id="textNewDeltaValuesEvery">0</h3>
+                </div>
+                <div class="sectionDivider" style="padding-bottom: 75px">
+                    <hr>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load script generated by Arduino at Setup -->
+    <script src="wsConnection.js"></script>
+
+    <script>
+        // Setup Variables for settings
+        // ================================================================================
+        var nightMode;
+
+        // Setup Elements for Dynamic Updates
+        // ================================================================================
+        var divError = document.getElementById("divError");
+        var divConnected = document.getElementById("divConnected");
+
+        var spanAlertStatus = document.getElementById("spanAlertStatus");
+        var textCurrentMicDeltaValue = document.getElementById("textCurrentMicDeltaValue");
+        var buttonShowSettings = document.getElementById("buttonShowSettings");
+
+        var divSettings = document.getElementById("divSettings");
+
+        var checkboxNightMode = document.getElementById("checkboxNightMode");
+
+        var textLowAlert = document.getElementById("textLowAlert");
+        var rangeLowAlert = document.getElementById("rangeLowAlert");
+
+        var textMidAlert = document.getElementById("textMidAlert");
+        var rangeMidAlert = document.getElementById("rangeMidAlert");
+
+        var textHighAlert = document.getElementById("textHighAlert");
+        var rangeHighAlert = document.getElementById("rangeHighAlert");
+
+        var textMicSamplesToAverage = document.getElementById("textMicSamplesToAverage");
+        var rangeMicSamplesToAverage = document.getElementById("rangeMicSamplesToAverage");
+
+        var textNewDeltaValuesEvery = document.getElementById("textNewDeltaValuesEvery");
+
+        // Connect to Server - wsConnection variable comes from the wsConnection.js script 
+        // which is dynamically generated by the Arduino at startup
+        // ================================================================================
+        const webSocket = new WebSocket(window.wsConnection);
+
+        // Handle basic Websocket States
+        // ================================================================================
+        webSocket.onopen = function(event) {
+            divError.style.display = "none";
+            divConnected.style.display = "flex";
+            console.log("WebSocket Connected!");
+        };
+
+        webSocket.onclose = function(event) {
+            divError.style.display = "flex";
+            divConnected.style.display = "none";
+            console.log("WebSocket Disconnected!")
+            location.reload();
+        }
+
+        webSocket.onerror = function(event) {
+            divError.style.display = "flex";
+            divConnected.style.display = "none";
+            console.log("WebSocket Error!")
+            location.reload();
+        }
+
+
+        // Handle Incoming Websocket messages
+        // ================================================================================
+        webSocket.onmessage = function(event) {
+            var msgType = event.data.split('_|_')[0];
+            var msgData = event.data.split('_|_')[1];
+            switch (msgType) {
+                case 'micDeltaAverage':
+                    // Update micDeltaAverage     
+                    micDeltaAverageChange(msgData);
+                    break;
+                case 'nightMode':
+                    // Handle Night Mode Change
+                    nightModeChange(null, msgData);
+                    break;
+                default:
+                    // Update page elements based on their msgType, catch error if the element isn't found    
+                    try {
+                        document.getElementById(`${msgType}`).value = msgData;
+                        checkValues();
+                    } catch (error) {
+                        console.log('Received Unknown Message: ' + event.data);
+                    }
+            };
+        };
+
+
+        // Handle Mic Delta Value Changes
+        // ================================================================================
+        function micDeltaAverageChange(micDeltaValue) {
+            // Update Mic Delta Value Display
+            textCurrentMicDeltaValue.innerText = micDeltaValue;
+            // Change Alerts Status Accordingly
+            micDeltaValue = parseInt(micDeltaValue);
+            if (micDeltaValue >= rangeHighAlert.value) {
+                spanAlertStatus.style.backgroundColor = "#E61515";
+            } else if (micDeltaValue >= rangeMidAlert.value) {
+                spanAlertStatus.style.backgroundColor = "#EDE213";
+            } else if (micDeltaValue >= rangeLowAlert.value) {
+                spanAlertStatus.style.backgroundColor = "#32A840";
+            } else {
+                spanAlertStatus.style.backgroundColor = "#BBBBBB"
+            }
+        }
+
+
+        // Handle changes to Night Mode
+        // ================================================================================
+        function nightModeChange(elementId, value) {
+            nightMode = value;
+            // presence of elementId indicates a change via browser to send to server
+            if (elementId != null) {
+                webSocketSend("nightMode", (nightMode ? 1 : 0));
+            } else {
+                if (nightMode == true) {
+                    checkboxNightMode.checked = true;
+                    document.body.style.backgroundColor = "#222222";
+                } else {
+                    checkboxNightMode.checked = false;
+                    document.body.style.backgroundColor = "#FFFFFF";
+                }
+            }
+        }
+
+
+        // Check to make sure values are within range and update text elements
+        // ================================================================================
+        function checkValues(elementId) {
+            // Alert Levels Section
+            if (elementId == "rangeLowAlert") {
+                if ((parseInt(rangeLowAlert.value) + 5) > rangeMidAlert.value) {
+                    rangeMidAlert.value = (parseInt(rangeLowAlert.value) + 5);
+                }
+                if ((parseInt(rangeLowAlert.value) + 10) > rangeHighAlert.value) {
+                    rangeHighAlert.value = (parseInt(rangeLowAlert.value) + 10);
+                }
+            }
+            if (elementId == "rangeMidAlert") {
+                if ((parseInt(rangeMidAlert.value) - 5) < rangeLowAlert.value) {
+                    rangeLowAlert.value = (parseInt(rangeMidAlert.value) - 5);
+                }
+                if ((parseInt(rangeMidAlert.value) + 5) > rangeHighAlert.value) {
+                    rangeHighAlert.value = (parseInt(rangeMidAlert.value) + 5);
+                }
+            }
+            if (elementId == "rangeHighAlert") {
+                if ((parseInt(rangeHighAlert.value) - 10) < rangeLowAlert.value) {
+                    rangeLowAlert.value = (parseInt(rangeHighAlert.value) - 10);
+                }
+                if ((parseInt(rangeHighAlert.value) - 5) < rangeMidAlert.value) {
+                    rangeMidAlert.value = (parseInt(rangeHighAlert.value) - 5);
+                }
+            }
+            textLowAlert.innerText = "Low Alert Value: " + rangeLowAlert.value;
+            textMidAlert.innerText = "Mid Alert Value: " + rangeMidAlert.value;
+            textHighAlert.innerText = "High Alert Value: " + rangeHighAlert.value;
+            // Mic Sample Section
+            textMicSamplesToAverage.innerText = "Mic Samples To Average: " + rangeMicSamplesToAverage.value;
+            var SampleTime = (100 * rangeMicSamplesToAverage.value) / 1000;
+            if (SampleTime <= 1) {
+                textNewDeltaValuesEvery.innerText = SampleTime + " second";
+            } else {
+                textNewDeltaValuesEvery.innerText = SampleTime + " seconds";
+            }
+        }
+
+
+        // Figure out which values to send
+        // ================================================================================
+        function sendValues(elementId, elementValue, groupId) {
+            // Other Alert Levels can change when one changes, so just send them all
+            if (groupId == "Alerts") {
+                webSocketSend(rangeLowAlert.id, rangeLowAlert.value);
+                webSocketSend(rangeMidAlert.id, rangeMidAlert.value);
+                webSocketSend(rangeHighAlert.id, rangeHighAlert.value);
+            } else {
+                webSocketSend(elementId, elementValue);
+            }
+        }
+
+
+        // Format and actually send values 
+        // ================================================================================
+        function webSocketSend(msgType, msgData) {
+            var messageToSend = msgType + "_|_" + msgData;
+            //console.log("Sending Message: " + messageToSend)
+            webSocket.send(messageToSend);
+        };
+
+
+        // Run when page loads
+        // ================================================================================
+        function toggleSettings() {
+            if (divSettings.style.transform == "scaleY(0)") {
+                divSettings.style.transform = "scaleY(1)";
+                buttonShowSettings.innerHTML = "&#9652 Hide Settings &#9652";
+                setTimeout(() => {
+                    window.scroll(0, 10000);
+                }, 250);
+            } else {
+                window.scroll(0, 0);
+                setTimeout(() => {
+                    divSettings.style.transform = "scaleY(0)";
+                    buttonShowSettings.innerHTML = "&#9662 Show Settings &#9662";
+                }, 300);
+            }
+        }
+
+
+        // Run when page is shown
+        // ================================================================================
+        window.addEventListener("pageshow", function() {
+            if (webSocket.readyState >= 2) {
+                location.reload();
+            }
+        });
+    </script>
+
+</body>
+
+</html>
