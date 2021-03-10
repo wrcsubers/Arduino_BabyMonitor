@@ -20,10 +20,10 @@ The transmitter hardware consists of a NodeMCU with a microphone and amplifier c
   * LM358N Op-Amp
   * Various Capacitors, Resistors and Jumper Wires
 
-* The two onboard LEDs on the transmitter show the following:
+* The two on-board LEDs on the transmitter show the following:
   * NodeMCU LED (closest one to USB port) - Shows system status, solid when server is up and running.
   * ESP8266 LED (on WiFi chip) - On when sound level low threshold exceeded.
-* I used the microphone from a KY-037 module, however, I don't reccommend these modules as a whole.  They have very poor sensitivity and are extremely difficult to fine tune to different sound levels.
+* I used the microphone from a KY-037 module, however, I don't recommend these modules as a whole.  They have very poor sensitivity and are extremely difficult to fine tune to different sound levels.
 * I'm not super familiar with using Op-Amps and Microphones, so I followed this guide: https://lowvoltage.wordpress.com/2011/05/21/lm358-mic-amp/ 
 
 #### Software
@@ -39,7 +39,7 @@ The sound processing logic works as follows:
 
 Any other values changed on a client are broadcast to the server, which then re-broadcasts the updated values to all connected clients.
 
-The transmitter also runs a Multicast-DNS Service to facilitate easy communication between transmitter/receiver.  For systems that don't support mDNS, you can browse the webpage by visiting the IP Address of the transmitter.  Upon startup, the transmitter dynamically creates a Javascript file containing the current IP Address of the transmitter.  This is then read by the webpage to connect to the Websocket port.  This method allows the use of both mDNS and IP Address resolution/browsing of the web interface.
+The transmitter also runs a Multicast-DNS Service to facilitate easy communication between transmitter/receiver.  For systems that don't support mDNS, you can browse the web page by visiting the IP Address of the transmitter.  Upon startup, the transmitter dynamically creates a Javascript file containing the current IP Address of the transmitter.  This is then read by the web page to connect to the Websocket port.  This method allows the use of both mDNS and IP Address resolution/browsing of the web interface.
 
 
 
@@ -52,12 +52,12 @@ The receiver consists of a NodeMCU with visual and audible notification elements
 
 * 1/2 Size Breadboard with:
   * Amica NodeMCU v1.0
-  * Greeen, Yellow, Red, and Blue LEDs
+  * Green, Yellow, Red, and Blue LEDs
   * Omron Button Switch
   * Active Buzzer
   * Various Resistors and Jumper Wires
 
-* The two onboard LEDs on the receiver show the following:
+* The two on-board LEDs on the receiver show the following:
   * NodeMCU LED (closest one to USB port) - Shows system status, solid on when receiver is up connected to WiFi.
   * ESP8266 LED (on WiFi chip) - Solid on when connected to the transmitter Websocket server.
 
@@ -79,7 +79,7 @@ The web interface of the Baby Monitor allows users to change settings on the fly
 Expand the settings section on the web interface to reveal the following:
 * Night Mode
   * Off (default) - Built-in Blue LEDs on transmitter and receiver show their states as explained above.
-  * On - Built-in Blue LEDs on transmitter and receiver are turned off and do not show any activity.  Night mode does not affect the Alert Level/Mute LEDs on the reciever.
+  * On - Built-in Blue LEDs on transmitter and receiver are turned off and do not show any activity.  Night mode does not affect the Alert Level/Mute LEDs on the receiver.
 
 * Alert Values
   * Low - If the 'Current Mic Delta Value' exceeds this value, the green light on the receiver turns on.
@@ -92,17 +92,17 @@ Expand the settings section on the web interface to reveal the following:
 
 ## Setup/Installation
 1. Build the transmitter/receiver boards as shown in images above (hi-res images in _Images/HiRes folder).
-2. Install Arudiuno IDE (version used: 1.8.13) from here: https://www.arduino.cc/en/software
+2. Install Arduino IDE (version used: 1.8.13) from here: https://www.arduino.cc/en/software
 3. Setup the NodeMCU for the Arduino environment using this guide: https://github.com/esp8266/Arduino
 4. Setup LittleFS, be sure to follow the bottom part of this section specifically for LittleFS: https://arduino-esp8266.readthedocs.io/en/latest/filesystem.html#uploading-files-to-file-system
 5. Clone/Download the following folders/files: https://github.com/wrcsubers/Arduino_BabyMonitor/tree/main/_Code
 6. Modify the .ino files to include your WiFi information
-7. Upload the BabyMonitor_Receiver.ino file to the reciever using the Arduino IDE.
+7. Upload the BabyMonitor_Receiver.ino file to the receiver using the Arduino IDE.
 8. Upload the BabyMonitor_Transmitter.ino file to the transmitter using the Arduino IDE.
-9. Upload the data folder to the Transmitter from the Arduino IDE using: Arudino IDE > Tools > ESP8266 LittleFS Data Upload
+9. Upload the data folder to the Transmitter from the Arduino IDE using: Arduino IDE > Tools > ESP8266 LittleFS Data Upload
 10. The transmitter/receiver should automatically connect to each other, reference the status light explanations above.
 11. You can find the IP Address of the transmitter during startup by watching the serial monitor.
-12. Visit the IP Address (or default mDNS name, 'babymonitor.local') of the transmitter from your computer or movile devices browser.
+12. Visit the IP Address (or default mDNS name, 'babymonitor.local') of the transmitter from your computer or mobile devices browser.
 13. Any changes made on the web interface are updated instantly across all devices.
 
 Enjoy!
