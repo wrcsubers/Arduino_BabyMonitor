@@ -71,9 +71,10 @@
         input.myRange::-webkit-slider-thumb {
             width: 26px;
             height: 26px;
-            background: #4ed164;
+            background: #FFFFFF;
             border: 1px solid #D9DADC;
             border-radius: 15px;
+            box-shadow: 2px 1px 6px rgba(0, 0, 0, 0.1), -2px 1px 6px rgba(0, 0, 0, 0.1);
             cursor: pointer;
             -webkit-appearance: none;
         }
@@ -93,9 +94,10 @@
         input.myRange::-moz-range-thumb {
             width: 26px;
             height: 26px;
-            background: #4ed164;
+            background: #FFFFFF;
             border: 1px solid #D9DADC;
             border-radius: 15px;
+            box-shadow: 2px 1px 6px rgba(0, 0, 0, 0.1), -2px 1px 6px rgba(0, 0, 0, 0.1);
             cursor: pointer;
         }
         
@@ -105,10 +107,10 @@
             outline: none;
             width: 50px;
             height: 30px;
-            background-color: #fff;
+            background-color: #FFFFFF;
             border: 2px solid #D9DADC;
             border-radius: 50px;
-            box-shadow: inset -20px 0 0 0 #fff;
+            box-shadow: inset -20px 0 0 0 #FFFFFF;
             transition-timing-function: ease-in;
             transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
             transition: 0.2s;
@@ -118,8 +120,8 @@
         input.mySwitch:after {
             content: "";
             position: absolute;
-            top: 1px;
-            left: 1px;
+            top: 0px;
+            left: 0px;
             background: transparent;
             width: 26px;
             height: 26px;
@@ -150,8 +152,8 @@
             display: flex;
             align-items: center;
             height: 35px;
-            margin-top: 5px;
-            margin-bottom: 7px;
+            margin-top: 1vh;
+            margin-bottom: 1vh;
         }
         
         h1 {
@@ -231,28 +233,27 @@
 
 <body id="body">
     <div>
-        <div id="divError" style="align-items: center; height: 75vh; display: flex;">
+        <!-- Shows when there is an error connecting to server -->
+        <div id="divError" style="align-items: center; height: 100vh; display: flex;">
             <h1>Baby Monitor</h1>
             <div class="sectionDivider"></div>
             <h2>Trying to Connect...</h2>
         </div>
+        <!-- Shows when connected to server -->
         <div id="divConnected" style="display: none;">
-            <div style="height: 95vh;">
+            <div style="height: 100vh;">
                 <h1>Baby Monitor</h1>
                 <div class="sectionDivider"></div>
                 <div>
                     <h3>Alert Status:</h3>
-                    <span style="height: 40vmax; width: 40vmax; max-width: 300px; max-height: 300px; background-color: #bbb; border-radius: 50%; display: inline-block; margin: 10px;" id="spanAlertStatus"></span>
+                    <span style="height: 40vh; width: 40vh; max-width: 300px; max-height: 300px; background-color: #bbb; border-radius: 50%; display: inline-block; margin: 10px;" id="spanAlertStatus"></span>
                 </div>
                 <div style="margin-top: 25px;">
                     <h3>Current Mic Delta Value:</h3>
                     <h2 id="textCurrentMicDeltaValue">50</h2>
                 </div>
-                <div style="position: absolute; top: 92.5vh;">
-                    <button id="buttonShowSettings" onclick="toggleSettings()">&#9662; Show Settings &#9662;</button>
-                </div>
             </div>
-            <div id="divSettings" style="transform: scaleY(0); height: 0;">
+            <div id="divSettings">
                 <div class="sectionDivider">
                     <hr>
                 </div>
@@ -281,15 +282,10 @@
                     <hr>
                 </div>
                 <div>
-                    <h3 id="textMicSamplesToAverage">Mic Samples to Average:
-                    </h3>
-                    <input id="rangeMicSamplesToAverage" onchange="sendValues(this.id, this.value)" oninput="checkValues(this.id)" class="myRange" type="range" min="2" max="50" step="2">
+                    <h3 id="textMicInputSmoothing">Mic Input Smoothing:</h3>
+                    <input id="rangeMicInputSmoothing" onchange="sendValues(this.id, this.value)" oninput="checkValues(this.id)" class="myRange" type="range" min="2" max="50" step="2">
                 </div>
-                <div>
-                    <h3>Mic Delta Averaged Over:</h3>
-                    <h3 id="textNewDeltaValuesEvery">0</h3>
-                </div>
-                <div class="sectionDivider" style="padding-bottom: 75px">
+                <div class="sectionDivider">
                     <hr>
                 </div>
             </div>
@@ -311,7 +307,6 @@
 
         var spanAlertStatus = document.getElementById("spanAlertStatus");
         var textCurrentMicDeltaValue = document.getElementById("textCurrentMicDeltaValue");
-        var buttonShowSettings = document.getElementById("buttonShowSettings");
 
         var divSettings = document.getElementById("divSettings");
 
@@ -326,10 +321,8 @@
         var textHighAlert = document.getElementById("textHighAlert");
         var rangeHighAlert = document.getElementById("rangeHighAlert");
 
-        var textMicSamplesToAverage = document.getElementById("textMicSamplesToAverage");
-        var rangeMicSamplesToAverage = document.getElementById("rangeMicSamplesToAverage");
-
-        var textNewDeltaValuesEvery = document.getElementById("textNewDeltaValuesEvery");
+        var textMicInputSmoothing = document.getElementById("textMicInputSmoothing");
+        var rangeMicInputSmoothing = document.getElementById("rangeMicInputSmoothing");
 
         // Connect to Server - wsConnection variable comes from the wsConnection.js script 
         // which is dynamically generated by the Arduino at startup
@@ -454,14 +447,9 @@
             textLowAlert.innerText = "Low Alert Value: " + rangeLowAlert.value;
             textMidAlert.innerText = "Mid Alert Value: " + rangeMidAlert.value;
             textHighAlert.innerText = "High Alert Value: " + rangeHighAlert.value;
-            // Mic Sample Section
-            textMicSamplesToAverage.innerText = "Mic Samples To Average: " + rangeMicSamplesToAverage.value;
-            var SampleTime = (100 * rangeMicSamplesToAverage.value) / 1000;
-            if (SampleTime <= 1) {
-                textNewDeltaValuesEvery.innerText = SampleTime + " second";
-            } else {
-                textNewDeltaValuesEvery.innerText = SampleTime + " seconds";
-            }
+
+            // Mic Input Smoothing Section - Make it easier to conceptualize by converting a 2-50 scale into a 0-100 scale
+            textMicInputSmoothing.innerText = "Mic Input Smoothing: " + (Math.round((rangeMicInputSmoothing.value * 2.083) - 4.166)).toString();
         }
 
 
@@ -486,25 +474,6 @@
             //console.log("Sending Message: " + messageToSend)
             webSocket.send(messageToSend);
         };
-
-
-        // Run when page loads
-        // ================================================================================
-        function toggleSettings() {
-            if (divSettings.style.transform == "scaleY(0)") {
-                divSettings.style.transform = "scaleY(1)";
-                buttonShowSettings.innerHTML = "&#9652 Hide Settings &#9652";
-                setTimeout(() => {
-                    window.scroll(0, 10000);
-                }, 250);
-            } else {
-                window.scroll(0, 0);
-                setTimeout(() => {
-                    divSettings.style.transform = "scaleY(0)";
-                    buttonShowSettings.innerHTML = "&#9662 Show Settings &#9662";
-                }, 300);
-            }
-        }
 
 
         // Run when page is shown
