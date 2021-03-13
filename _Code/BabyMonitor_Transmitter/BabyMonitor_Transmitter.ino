@@ -141,7 +141,7 @@ void processWebSocketMessage(char * msgType, char * msgData) {
     soundMidAlertLevel = atoi(msgData);
   } else if (strcmp(msgType, "rangeHighAlert") == 0) {
     soundHighAlertLevel = atoi(msgData);
-  } else if (strcmp(msgType, "rangeMicSamplesToAverage") == 0) {
+  } else if (strcmp(msgType, "rangeMicInputSmoothing") == 0) {
     micDeltaSamplesToAvg = atoi(msgData);
   } else {
     Serial.println("Message not Found!");
@@ -167,7 +167,7 @@ void updateClients() {
   delay(20);
   webSocketSend("rangeHighAlert", String(soundHighAlertLevel));
   delay(20);
-  webSocketSend("rangeMicSamplesToAverage", String(micDeltaSamplesToAvg));
+  webSocketSend("rangeMicInputSmoothing", String(micDeltaSamplesToAvg));
 }
 
 
