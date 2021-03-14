@@ -12,7 +12,7 @@
 
 ![Image of BabyMonitor Transmitter](https://github.com/wrcsubers/Arduino_BabyMonitor/blob/main/_Images/Arduino_BabyMonitor_Transmitter.png)
 
-The transmitter hardware consists of a NodeMCU with a microphone and amplifier circuit.  The output of this circuit is fed into the ADC of the NodeMCU.  Sound level is determined by sampling the input repeatedly, then measuring the difference between the largest and smallest values.  This is called the Mic Delta.  During low levels of noise, the Mic Delta value is small, which then increases with the loudness of the sound being measured.  I found this to be the most reliable/accurate way of determining sound levels near the microphone.  
+The transmitter hardware consists of a NodeMCU with a microphone and amplifier circuit.  The output of this circuit is fed into the ADC of the NodeMCU.  Sound level is determined by sampling the input repeatedly, then calculating the difference between the largest and smallest values.  This is called the Mic Delta value.  During low levels of noise, the Mic Delta value is small, which then increases with the loudness of the sound being measured.  I found this to be the most reliable/accurate way of determining sound levels near the microphone.  
 
 * 1/2 Size Breadboard with:
   * Amica NodeMCU v1.0
@@ -21,23 +21,21 @@ The transmitter hardware consists of a NodeMCU with a microphone and amplifier c
   * Various Capacitors, Resistors and Jumper Wires
 
 * The two on-board LEDs on the transmitter show the following:
-  * NodeMCU LED (closest one to USB port) - Shows system status, solid when server is up and running.
-  * ESP8266 LED (on WiFi chip) - On when sound level low threshold exceeded.
+  * NodeMCU LED (closest one to USB port) - Shows system status, solid when Websocket server is up and running.
+  * ESP8266 LED (on WiFi chip) - On when the low sound level threshold is exceeded.
 * I used the microphone from a KY-037 module, however, I don't recommend these modules as a whole.  They have very poor sensitivity and are extremely difficult to fine tune to different sound levels.
-* I'm not super familiar with using Op-Amps and Microphones, so I followed this guide: https://lowvoltage.wordpress.com/2011/05/21/lm358-mic-amp/ 
+* I'm not super familiar with using Op-Amps and Microphones, so I followed this very helpful guide: https://lowvoltage.wordpress.com/2011/05/21/lm358-mic-amp/ 
 
 #### Software
 The transmitter software consists mainly of a Websocket and HTTP Server with additional processing logic for sound levels.  
 
 The sound processing logic works as follows:
-  1.  Sound level is measured every 50ms.  
-  2.  After each measurement, the value is compared to previous min/max values. Those values are updated if the current measurement exceeds them.
-  3.  After 4 measurements, the difference between the largest and smallest values is added to a circular buffer.
-  4.  The above 3 steps repeat every ~200ms, which gives 5 Deltas every second.
-  5.  The average of the readings gets stored in the circular buffer.  The number of readings to average is determined by the 'Mic Samples to Average' setting, which can be changed on the web interface.
-  6.  The above average is broadcast to all client connected every 200ms.
+  1.  Sound level is measured every 50ms.  This value is compared to previous min/max values and updated if needed.
+  2.  After 4 measurements (~200ms), the difference between the largest and smallest of the 4 measurements is added to a circular buffer.
+  3.  Each time a new value is added to the cirular buffer, the average of multiple values is calculated.  The number of values that are averaged together is based upon the 'micDeltaSamplesToAvg' which is a value between 2-50.  This value can be modified on the webapp by adjusting the 'Mic Input Smoothing' slider.
+  4.  Once the average is calculated, the value is broadcast to all connected clients (~200ms/update).
 
-Any other values changed on a client are broadcast to the server, which then re-broadcasts the updated values to all connected clients.
+Any other values changed via the webapp are broadcast to the server, which then re-broadcasts the updated values to all connected clients.
 
 The transmitter also runs a Multicast-DNS Service to facilitate easy communication between transmitter/receiver.  For systems that don't support mDNS, you can browse the web page by visiting the IP Address of the transmitter.  Upon startup, the transmitter dynamically creates a Javascript file containing the current IP Address of the transmitter.  This is then read by the web page to connect to the Websocket port.  This method allows the use of both mDNS and IP Address resolution/browsing of the web interface.
 
@@ -59,7 +57,7 @@ The receiver consists of a NodeMCU with visual and audible notification elements
 
 * The two on-board LEDs on the receiver show the following:
   * NodeMCU LED (closest one to USB port) - Shows system status, solid on when receiver is up connected to WiFi.
-  * ESP8266 LED (on WiFi chip) - Solid on when connected to the transmitter Websocket server.
+  * ESP8266 LED (on WiFi chip) - Solid on when connected to the transmitter's Websocket server.
 
 The LEDs and Buzzer could be replaced to facilitate different notifications as well.  Originally, I used some WS2812 LEDs for visual notification, but ended up opting for a simple 3 LED system of Green (Low Alert), Yellow (Mid Alert), and Red (High Alert).  The Blue LED turns on when the Buzzer is muted and off when it is not.  A simple Active Buzzer, which cycles on and off rapidly, creates the alarm sound.  This could also be replaced with a Passive Buzzer and some PWM output from the NodeMCU.
 
@@ -86,7 +84,7 @@ Expand the settings section on the web interface to reveal the following:
   * Mid - Same as above, but the yellow light turns on.
   * High - Same as above, but the red light turns on AND the audible alarm sounds.
 
-* Mic Samples To Average - Essentially the amount of smoothing to apply to the Mic Delta Value.  A higher value here means that the sound level needs to be high for a longer period of time to increase the Current Mic Delta Value.  At it's lowest setting, you will basically get instant feedback of sound level changes, although they are very erratic.
+* Mic Input Smoothing - The amount of smoothing to apply to the Mic Delta Value.  A higher value here means that the sound level needs to be high for a longer period of time to increase the Current Mic Delta Value.  At it's lowest setting, you will basically get instant feedback of sound level changes, although the values are very erratic.
 
 
 
