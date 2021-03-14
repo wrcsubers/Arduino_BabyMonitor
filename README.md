@@ -32,7 +32,7 @@ The transmitter software consists mainly of a Websocket and HTTP Server with add
 The sound processing logic works as follows:
   1.  Sound level is measured every 50ms.  This value is compared to previous min/max values and updated if needed.
   2.  After 4 measurements (~200ms), the difference between the largest and smallest of the 4 measurements is added to a circular buffer.
-  3.  Each time a new value is added to the cirular buffer, the average of multiple values is calculated.  The number of values that are averaged together is based upon the 'micDeltaSamplesToAvg' which is a value between 2-50.  This value can be modified on the webapp by adjusting the 'Mic Input Smoothing' slider.
+  3.  Each time a new value is added to the circular buffer, the average of multiple values is calculated.  The number of values that are averaged together is based upon the 'micDeltaSamplesToAvg' which is a value between 2-50.  This value can be modified on the webapp by adjusting the 'Mic Input Smoothing' slider.
   4.  Once the average is calculated, the value is broadcast to all connected clients (~200ms/update).
 
 Any other values changed via the webapp are broadcast to the server, which then re-broadcasts the updated values to all connected clients.
