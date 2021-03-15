@@ -7,6 +7,10 @@
 
 ### YouTube Video: (link)
 
+## Overview
+I started this project because we had recently moved our son upstairs into his own room and we were having trouble hearing wake up.  The idea was to create a simple sound detection device that could alert us when he was awake and actively crying.  I had two NodeMCUs laying around and thought I could send the data from unit to another via WiFi.  I've used Websockets in the past and I really like the full-duplex communication, so I decided that would be the basis for sending information.  I went through a few different iterations of the design and ended up on the following setup.  If you have any questions or comments, feel free to start a discussion or open an issue if needed.  Thanks for checking this project out =)
+
+
 ## Transmitter
 #### Hardware
 
