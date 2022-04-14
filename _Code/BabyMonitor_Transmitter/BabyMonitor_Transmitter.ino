@@ -178,7 +178,8 @@ void updateClients() {
 // Use: webSocketSend("Type", String(Data));
 void webSocketSend(String msgType, String msgData) {
   String delimiter = "_|_";
-  webSocket.broadcastTXT(msgType + delimiter + msgData);
+  String fullMessage = msgType + delimiter + msgData;
+  webSocket.broadcastTXT(fullMessage);
 }
 
 
